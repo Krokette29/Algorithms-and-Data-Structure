@@ -1,1 +1,1 @@
-# Coursera-Divide-and-Conquer--Sorting-and-Searching--and-Randomized-Algorithms
+# Algorithms-and-Data-Structure
