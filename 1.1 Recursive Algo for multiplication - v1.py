@@ -38,13 +38,27 @@ def karatsuba_rec(x, y):
 
 	ac = karatsuba_rec(listToInt(a_list), listToInt(c_list))
 	bd = karatsuba_rec(listToInt(b_list), listToInt(d_list))
-	ad = karatsuba_rec(listToInt(a_list), listToInt(d_list))
-	bc = karatsuba_rec(listToInt(b_list), listToInt(c_list))
+	# ad = karatsuba_rec(listToInt(a_list), listToInt(d_list))
+	# bc = karatsuba_rec(listToInt(b_list), listToInt(c_list))
 
 	# gaussNum = karatsuba_rec(listToInt(a_list)+listToInt(b_list), listToInt(c_list)+listToInt(d_list)) - ac - bd
 
-	return int(10**n*ac + 10**(n/2)*(ad + bc) + bd)
+	aPlusb = listToInt(a_list) + listToInt(b_list)
+	cPlusd = listToInt(c_list) + listToInt(d_list)
 
+
+	return int(zeroPad(str(ac), n)) + int(zeroPad(str(gaussNum), int(n/2))) + bd
+
+
+
+def zeroPad(numStr, zeroNum):
+	'''
+	Add zeroNum zeros at the end of numStr.
+	'''
+	for i in range(zeroNum):
+		numStr = numStr + '0'
+
+	return numStr
 
 
 
