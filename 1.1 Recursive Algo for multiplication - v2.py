@@ -1,10 +1,13 @@
+'''
+It's the recursive algorithm for multiplication. 
+But it's only for 2**n-bit integers, and two inputs have the same lengths.
+The improved method see the Karatsuba algorithm.
+T(n) <= 4T(n/2) + O(n) = O(n**(log2(4))) = O(n**2)
+'''
+
 import time
 
 def recMulti(x, y):
-	'''
-	It's the recursive algorithm for multiplication. 
-	But it's only for 2**n-bit integers, and two inputs have the same lengths.
-	'''
 	x = str(x)
 	y = str(y)
 
@@ -29,6 +32,7 @@ def recMulti(x, y):
 	return int(zeroPad(str(ac), n)) + int(zeroPad(str(ad + bc), int(n/2))) + bd
 
 
+# this part of code represents O(n), outside the recursive calls
 def zeroPad(numStr, zeroNum):
 	'''
 	Add zeroNum zeros at the end of numStr.

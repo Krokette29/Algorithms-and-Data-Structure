@@ -1,11 +1,14 @@
+'''
+Multiplication using Karatsuba Algorithm.
+Input two integers, no matter how long they respectivly are.
+Quite perfect function.
+T(n) <= 3T(n/2) + O(n) = O(n**(log2(3))) = O(n**1.59)
+which is quite better than naiver recursive altorithm with O(n**2).
+'''
+
 import time
 
 def karatsubaRec(x, y):
-	'''
-	Multiplication using Karatsuba Algorithm.
-	Input two integers, no matter how long they respectivly are.
-	Quite perfect function.
-	'''
 	x = str(x)
 	y = str(y)
 
@@ -20,7 +23,7 @@ def karatsubaRec(x, y):
 		return int(x) * int(y)
 
 	flag = 0
-	# devide
+	# devide process
 	if n[0] < n[1]:
 		nDevide = n[0]//2
 		a = int(x[:nDevide])
@@ -38,9 +41,9 @@ def karatsubaRec(x, y):
 
 	# a, b, c, d - int
 
+	# three recursive calls
 	ac = karatsubaRec(a, c)
 	bd = karatsubaRec(b, d)
-
 	gaussNum = karatsubaRec(a+b, c+d) - ac - bd
 
 	return int(zeroPad(str(ac), 2 * (n[0+flag] - nDevide))) + int(zeroPad(str(gaussNum), (n[0+flag] - nDevide))) + bd
