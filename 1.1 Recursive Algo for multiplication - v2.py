@@ -49,8 +49,6 @@ def zeroPad(numStr, zeroNum):
 x = input('input1:')
 y = input('input2:')
 
-time.process_time()
-
 myAnswer = recMulti(x, y)
 exactAnswer = int(x) * int(y)
 print('My answer:' + str(myAnswer))
