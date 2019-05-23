@@ -21,7 +21,7 @@ output.close()
 '''
 
 # open the txt file, which includs 100,000 numbers in an unsorted order
-input = open('MergeSortIntegerArray.txt')
+input = open('data/MergeSortIntegerArray.txt')
 
 # read the file, and split into a list
 a = input.readlines()
@@ -97,15 +97,15 @@ def CountInvBrute(a):
 	return num
 
 
-tStart = time.perf_counter()
+tic = time.perf_counter()
 ans1 = CountInv(a)[1]
-t1 = time.perf_counter()
+toc1 = time.perf_counter()
 # ans2 = CountInvBrute(a)
-# t2 = time.perf_counter()
+# toc2 = time.perf_counter()
 
 print('Answer by devide and conquer: {}'.format(ans1))
-print('Running time: {:.4}s'.format(t1 - tStart))
+print('Running time: {:.4}s'.format(toc1 - tic))
 # print('Answer by Brute-force: {}'.format(ans2))
-# print('Running time: {}s'.format(t2 - t1))
+# print('Running time: {}s'.format(toc2 - toc1))
 # print('Exact output: {}'.format(b))
 # print('Error: {}'.format(ans1 - ans2))
