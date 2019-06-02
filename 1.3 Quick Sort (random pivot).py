@@ -45,6 +45,8 @@ def QuickSort(A, l, r):
 
 def main():
 	numList = []
+
+	# Read the data line by line
 	with open('data/QuickSort.txt', 'r') as f:
 	    while True:
 	        line = f.readline().strip()
