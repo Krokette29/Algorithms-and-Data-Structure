@@ -3,7 +3,7 @@ sys.setrecursionlimit(400000)
 
 ########################################################
 # Reading the data, find the number of nodes
-file = open("data/SCC.txt", "r")
+file = open("testCases/SCC/input_mostlyCycles_40_3200.txt", "r")
 data = file.readlines()
 
 num_nodes = 0
@@ -43,14 +43,14 @@ for line in data:
 
 ########################################################
 # DFS-Loop function definition, can be used for both first pass and second pass
-def DFS_Loop(G, order, cal_order=False, cal_scc=False):
+def DFS_Loop(G: list, order: list, cal_order=False, cal_scc=False):
     for node in order:
         if not visited[node]:
             # print('explore node {}'.format(node))
             DFS(G, node, node, cal_order, cal_scc)
 
 
-def DFS(G, node, leader, cal_order, cal_scc):
+def DFS(G: list, node: int, leader: int, cal_order: bool, cal_scc: bool):
     global visited
     global finishing_order
     global scc
