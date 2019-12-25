@@ -17,7 +17,10 @@ class MinHeap(object):
         self.__calculate_num_layer()
 
     def __calculate_num_layer(self):
-        self.num_layer = math.ceil(math.log(len(self.heap), 2))
+        try:
+            self.num_layer = int(math.log(len(self.heap), 2)) + 1
+        except ValueError:
+            self.num_layer = 0
 
     def __swap(self, index1, index2):
         self.heap[index1], self.heap[index2] = self.heap[index2], self.heap[index1]
@@ -118,10 +121,15 @@ class MinHeap(object):
             print(string)
 
 
-test_list = [6, 5, 4, 1, 7, 3, 2]
+test_list = [4, 7, 3, 5, 9, 1, 2]
 test_heap = MinHeap(test_list)
 
 print('Initialize')
+test_heap.print_heap()
+test_heap.draw_heap()
+
+print('\nPush 6')
+test_heap.push(6)
 test_heap.print_heap()
 test_heap.draw_heap()
 
@@ -130,6 +138,6 @@ print("min is {}".format(test_heap.pop()))
 test_heap.print_heap()
 test_heap.draw_heap()
 
-print('\nDelete 4')
-test_heap.delete(4)
+print('\nDelete 5')
+test_heap.delete(5)
 test_heap.draw_heap()
