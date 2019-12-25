@@ -2,8 +2,8 @@ import math
 
 
 class MinHeap(object):
-    heap = []       # heap list
-    num_layer = 0       # number of layers
+    heap = []  # heap list
+    num_layer = 0  # number of layers
 
     def __init__(self, unsorted_list: list):
         self.heap = []
@@ -34,29 +34,29 @@ class MinHeap(object):
             else:
                 break
 
-    def __bubble_down(self):
-        i = 0
+    def __bubble_down(self, index: int = 0):
+        # if there is no input value, then bubble down from top
         while True:
             # in this case, the node has two children
             try:
                 # decide with which child to swap, if necessary
-                if self.heap[2 * (i + 1) - 1] < self.heap[2 * (i + 1)]:
-                    if self.heap[i] > self.heap[2 * (i + 1) - 1]:
-                        self.__swap(i, 2 * (i + 1) - 1)
-                        i = 2 * (i + 1) - 1
+                if self.heap[2 * (index + 1) - 1] < self.heap[2 * (index + 1)]:
+                    if self.heap[index] > self.heap[2 * (index + 1) - 1]:
+                        self.__swap(index, 2 * (index + 1) - 1)
+                        index = 2 * (index + 1) - 1
                     else:
                         break
                 else:
-                    if self.heap[i] > self.heap[2 * (i + 1)]:
-                        self.__swap(i, 2 * (i + 1))
-                        i = 2 * (i + 1)
+                    if self.heap[index] > self.heap[2 * (index + 1)]:
+                        self.__swap(index, 2 * (index + 1))
+                        index = 2 * (index + 1)
 
             # in this case, the node has only one child
             except IndexError:
                 try:
-                    if self.heap[i] > self.heap[2 * (i + 1) - 1]:
-                        self.__swap(i, 2 * (i + 1) - 1)
-                        i = 2 * (i + 1) - 1
+                    if self.heap[index] > self.heap[2 * (index + 1) - 1]:
+                        self.__swap(index, 2 * (index + 1) - 1)
+                        index = 2 * (index + 1) - 1
                     else:
                         break
 
@@ -87,6 +87,21 @@ class MinHeap(object):
 
         return min_value
 
+    def delete(self, value):
+        delete_complete = False
+
+        # find the index of value and delete it from the heap
+        for i in range(len(self.heap)):
+            if value == self.heap[i]:
+                self.__swap(i, -1)
+                self.heap.pop()
+                self.__bubble_down(i)
+                delete_complete = True
+                break
+
+        if not delete_complete:
+            print("No such value in the heap!")
+
     def print_heap(self):
         print(self.heap)
 
@@ -94,10 +109,10 @@ class MinHeap(object):
         # print every layer
         for i in range(self.num_layer):
             string = ''
-            for j in range(2**i):
+            for j in range(2 ** i):
                 try:
-                    string += str(self.heap[2**i+j-1])
-                    string += '\t' * num_tab * 2**(self.num_layer - i - 1)
+                    string += str(self.heap[2 ** i + j - 1])
+                    string += '\t' * num_tab * 2 ** (self.num_layer - i - 1)
                 except IndexError:
                     break
             print(string)
@@ -106,10 +121,15 @@ class MinHeap(object):
 test_list = [6, 5, 4, 1, 7, 3, 2]
 test_heap = MinHeap(test_list)
 
+print('Initialize')
 test_heap.print_heap()
 test_heap.draw_heap()
 
-print('')
+print('\nPop')
 print("min is {}".format(test_heap.pop()))
 test_heap.print_heap()
+test_heap.draw_heap()
+
+print('\nDelete 4')
+test_heap.delete(4)
 test_heap.draw_heap()
