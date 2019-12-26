@@ -23,8 +23,9 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ## Part2. Graph Search, Shortest Paths, and Data Structures
 
 ### 2.1 BFS and DFS
-- Computing SCCs (Strongly Connected Components) using Iteration and Recursion  
-(the version using recursion works not well on a large data set)
+- Computing SCCs (Strongly Connected Components) using Iteration
+- Computing SCCs using Recursion (this version works not well on a large data set)
 
 ### 2.2 Dijkstra's Shortest Path Algorithm
-- Dijkstra's Algorithm (using brute-force instead of heap)
+- Dijkstra's Algorithm (using brute-force)
+- Dijkstra's Algorithm (using heap)
