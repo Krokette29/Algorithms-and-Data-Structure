@@ -1,26 +1,16 @@
 import math
+from io import StringIO
+import random
 
 
 class MinHeap(object):
     heap = []  # heap list
-    num_layer = 0  # number of layers
 
     def __init__(self, unsorted_list: list):
-        self.heap = []
+        self.heap = unsorted_list
 
-        for i in range(len(unsorted_list)):
-            # add the next entry into heap
-            self.heap.append(unsorted_list[i])
-            self.__bubble_up()
-
-        # calculate the number of layers for use of drawing the heap tree
-        self.__calculate_num_layer()
-
-    def __calculate_num_layer(self):
-        try:
-            self.num_layer = int(math.log(len(self.heap), 2)) + 1
-        except ValueError:
-            self.num_layer = 0
+        # heapify the unsorted list
+        self.heapify()
 
     def __swap(self, index1, index2):
         self.heap[index1], self.heap[index2] = self.heap[index2], self.heap[index1]
@@ -53,6 +43,8 @@ class MinHeap(object):
                     if self.heap[index] > self.heap[2 * (index + 1)]:
                         self.__swap(index, 2 * (index + 1))
                         index = 2 * (index + 1)
+                    else:
+                        break
 
             # in this case, the node has only one child
             except IndexError:
@@ -67,18 +59,38 @@ class MinHeap(object):
                 except IndexError:
                     break
 
-    def get_heap(self):
-        return self.heap
+    def heapify(self):
+        """
+        Heapify the heap to reach a balance.
+
+        """
+        original_heap = self.heap
+        self.heap = []
+
+        for i in range(len(original_heap)):
+            # add the next entry into heap
+            self.heap.append(original_heap[i])
+            self.__bubble_up()
 
     def push(self, value):
+        """
+        Push a value into the heap and rebalance the tree.
+
+        Args:
+            value: input value for pushing
+
+        """
         # add the new value to the tail of the list
         self.heap.append(value)
 
         # bubble up to update the heap
         self.__bubble_up()
-        self.__calculate_num_layer()
 
     def pop(self):
+        """
+        Pop the minimum of the heap, and rebalance the tree.
+
+        """
         # swap the first value and the last value
         self.__swap(0, -1)
 
@@ -91,6 +103,13 @@ class MinHeap(object):
         return min_value
 
     def delete(self, value):
+        """
+        Delete the certain value in the heap, and rebalance the tree.
+
+        Args:
+            value: input value to be deleted
+
+        """
         delete_complete = False
 
         # find the index of value and delete it from the heap
@@ -98,46 +117,61 @@ class MinHeap(object):
             if value == self.heap[i]:
                 self.__swap(i, -1)
                 self.heap.pop()
-                self.__bubble_down(i)
                 delete_complete = True
+
+                # if the value is the last value of the heap, no need for heapify or bubble down
+                if i == len(self.heap):
+                    break
+
+                # if the swapped value breaks the balance, heapify again
+                if self.heap[(i + 1) // 2 - 1] > self.heap[i]:
+                    self.heapify()
+                else:
+                    self.__bubble_down(i)
                 break
 
         if not delete_complete:
             print("No such value in the heap!")
 
-    def print_heap(self):
-        print(self.heap)
+    def show_tree(self, total_width=36, fill=' '):
+        """
+        Draw a tree, from learnku.com - heapq
 
-    def draw_heap(self, num_tab: int = 1):
-        # print every layer
-        for i in range(self.num_layer):
-            string = ''
-            for j in range(2 ** i):
-                try:
-                    string += str(self.heap[2 ** i + j - 1])
-                    string += '\t' * num_tab * 2 ** (self.num_layer - i - 1)
-                except IndexError:
-                    break
-            print(string)
+        """
+        output = StringIO()
+        last_row = -1
+
+        for i, n in enumerate(self.heap):
+            if i:
+                row = int(math.floor(math.log(i + 1, 2)))
+            else:
+                row = 0
+            if row != last_row:
+                output.write('\n')
+            columns = 2 ** row
+            col_width = int(math.floor(total_width / columns))
+            output.write(str(n).center(col_width, fill))
+            last_row = row
+
+        print(output.getvalue())
+        print('-' * total_width)
+        print()
 
 
-test_list = [4, 7, 3, 5, 9, 1, 2]
-test_heap = MinHeap(test_list)
+test_list = [i for i in range(6)]
+random.shuffle(test_list)
+print('original list: {}'.format(test_list))
 
-print('Initialize')
-test_heap.print_heap()
-test_heap.draw_heap()
+print('\nInitialize/Heapify')
+heap = MinHeap(test_list)
+heap.show_tree()
 
-print('\nPush 6')
-test_heap.push(6)
-test_heap.print_heap()
-test_heap.draw_heap()
+push_value = random.randint(0, 10)
+print('\nPush {}'.format(push_value))
+heap.push(push_value)
+heap.show_tree()
 
-print('\nPop')
-print("min is {}".format(test_heap.pop()))
-test_heap.print_heap()
-test_heap.draw_heap()
-
-print('\nDelete 5')
-test_heap.delete(5)
-test_heap.draw_heap()
+delete_value = heap.heap[random.randint(0, 7)]
+print('\nDelete {}'.format(delete_value))
+heap.delete(delete_value)
+heap.show_tree()
