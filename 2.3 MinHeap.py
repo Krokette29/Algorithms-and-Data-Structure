@@ -59,6 +59,19 @@ class MinHeap(object):
                 except IndexError:
                     break
 
+    def check(self):
+        """
+        Check if the heap is still balance.
+
+        """
+        for i in range(1, len(self.heap)):
+            if self.heap[(i + 1) // 2 - 1] > self.heap[i]:
+                print('-----Error List-----')
+                print(self.heap)
+                print('-----Error Value-----')
+                print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
+            raise ValueError('Heap Error!')
+
     def heapify(self):
         """
         Heapify the heap to reach a balance.
@@ -71,6 +84,8 @@ class MinHeap(object):
             # add the next entry into heap
             self.heap.append(original_heap[i])
             self.__bubble_up()
+
+        self.check()
 
     def push(self, value):
         """
@@ -86,9 +101,13 @@ class MinHeap(object):
         # bubble up to update the heap
         self.__bubble_up()
 
+        self.check()
+
     def pop(self):
         """
         Pop the minimum of the heap, and rebalance the tree.
+        Returns:
+            min_value: the minimum of the heap
 
         """
         # swap the first value and the last value
@@ -99,6 +118,8 @@ class MinHeap(object):
 
         # bubble down to update the heap
         self.__bubble_down()
+
+        self.check()
 
         return min_value
 
