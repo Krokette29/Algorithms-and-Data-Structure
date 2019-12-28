@@ -3,10 +3,12 @@ from io import StringIO
 
 
 class MinHeap(object):
-    heap = []  # heap list
+    heap = []               # heap list
+    check_flag = False      # True for running the checking code
 
-    def __init__(self, unsorted_list: list):
+    def __init__(self, unsorted_list: list, check_flag=False):
         self.heap = unsorted_list
+        self.check_flag = check_flag
 
         # heapify the unsorted list
         self.heapify()
@@ -63,13 +65,14 @@ class MinHeap(object):
         Check if the heap is still balance.
 
         """
-        for i in range(1, len(self.heap)):
-            if self.heap[(i + 1) // 2 - 1] > self.heap[i]:
-                print('-----Error List-----')
-                print(self.heap)
-                print('-----Error Value-----')
-                print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
-                raise ValueError('Heap Error!')
+        if self.check_flag:
+            for i in range(1, len(self.heap)):
+                if self.heap[(i + 1) // 2 - 1] > self.heap[i]:
+                    print('-----Error List-----')
+                    print(self.heap)
+                    print('-----Error Value-----')
+                    print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
+                    raise ValueError('Heap Error!')
 
     def heapify(self):
         """
@@ -180,9 +183,11 @@ class MinHeap(object):
 
 class MaxHeap(object):
     heap = []  # heap list
+    check_flag = False  # True for running the checking code
 
-    def __init__(self, unsorted_list: list):
+    def __init__(self, unsorted_list: list, check_flag=False):
         self.heap = unsorted_list
+        self.check_flag = check_flag
 
         # heapify the unsorted list
         self.heapify()
@@ -239,13 +244,14 @@ class MaxHeap(object):
         Check if the heap is still balance.
 
         """
-        for i in range(1, len(self.heap)):
-            if self.heap[(i + 1) // 2 - 1] < self.heap[i]:
-                print('-----Error List-----')
-                print(self.heap)
-                print('-----Error Value-----')
-                print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
-                raise ValueError('Heap Error!')
+        if self.check_flag:
+            for i in range(1, len(self.heap)):
+                if self.heap[(i + 1) // 2 - 1] < self.heap[i]:
+                    print('-----Error List-----')
+                    print(self.heap)
+                    print('-----Error Value-----')
+                    print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
+                    raise ValueError('Heap Error!')
 
     def heapify(self):
         """
