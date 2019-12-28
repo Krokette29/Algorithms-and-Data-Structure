@@ -70,7 +70,7 @@ class MinHeap(object):
                 print(self.heap)
                 print('-----Error Value-----')
                 print('{} : {}'.format(self.heap[(i + 1) // 2 - 1], self.heap[i]))
-            raise ValueError('Heap Error!')
+                raise ValueError('Heap Error!')
 
     def heapify(self):
         """
