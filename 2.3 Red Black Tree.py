@@ -1,4 +1,4 @@
-from BinarySearchTree import *
+import random
 
 BLACK = 0
 RED = 1
@@ -25,20 +25,24 @@ class NodeRBT(object):
             return "BLACK"
 
     def show_info(self):
-        if not self.parent:
+        if not self.parent and self.key:
             print("######### ROOT #########")
         print("------------------------")
         print("key: %s" % self.key)
         print("value: %s" % self.value)
         print("color: %s" % self.get_color())
-        print("left_child: %s" % self.left_child.key)
-        print("right_child: %s" % self.right_child.key)
-        print("parent: %s" % self.parent.key if self.parent else "parent: None")
-        print("size_tree: %s" % self.size_tree)
+
+        try:
+            print("left_child: %s" % self.left_child.key)
+            print("right_child: %s" % self.right_child.key)
+            print("parent: %s" % self.parent.key if self.parent else "parent: None")
+            print("size_tree: %s" % self.size_tree)
+        except:
+            pass
         print("------------------------")
 
     def get_info_in_tuple(self):
-        return self.key, self.value, self.get_color()
+        return self.key, self.value, self.get_color(), self.size_tree
 
     def reset(self):
         self.key = None
@@ -118,14 +122,21 @@ class RedBlackTree(object):
             # update parent
             parent = node.parent
             neighbor = node.right_child
-            if node.key <= parent.key:
-                parent.left_child = neighbor
+            if parent:
+                if node.key <= parent.key:
+                    parent.left_child = neighbor
+                else:
+                    parent.right_child = node.right_child
+            # if no parent, means the grandparent node is the root
             else:
-                parent.right_child = node.right_child
+                self.root = neighbor
 
             # update node
             node.parent = neighbor
             node.right_child = neighbor.left_child
+
+            # update child tree of neighbor
+            neighbor.left_child.parent = node
 
             # update neighbor
             neighbor.parent = parent
@@ -135,7 +146,7 @@ class RedBlackTree(object):
             # print("size tree of node {}: {}".format(node.key, node.size_tree))
             # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
 
-            # update size of tree
+            # correct size of tree
             node.size_tree -= neighbor.size_tree
             node.size_tree += node.right_child.size_tree
             neighbor.size_tree -= node.right_child.size_tree
@@ -150,14 +161,20 @@ class RedBlackTree(object):
             # update parent
             parent = node.parent
             neighbor = node.left_child
-            if node.key <= parent.key:
-                parent.left_child = neighbor
+            if parent:
+                if node.key <= parent.key:
+                    parent.left_child = neighbor
+                else:
+                    parent.right_child = node.right_child
             else:
-                parent.right_child = node.right_child
+                self.root = neighbor
 
             # update node
             node.parent = neighbor
             node.left_child = neighbor.right_child
+
+            # update child tree of neighbor
+            neighbor.right_child.parent = node
 
             # update neighbor
             neighbor.parent = parent
@@ -167,7 +184,7 @@ class RedBlackTree(object):
             # print("size tree of node {}: {}".format(node.key, node.size_tree))
             # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
 
-            # update size of tree
+            # correct size of tree
             node.size_tree -= neighbor.size_tree
             node.size_tree += node.left_child.size_tree
             neighbor.size_tree -= node.left_child.size_tree
@@ -214,13 +231,115 @@ class RedBlackTree(object):
             parent_node.color = BLACK
             grand_parent_node.color = RED
 
+    def __delete_check(self, node):
+        # Case 1: the node is the root
+        if not node.parent:
+            node.color = BLACK
+        else:
+            parent = node.parent
+            # if the node is a null leaf node, then the cousin node is the right child node of parent node
+            if node.key:
+                cousin = parent.left_child if node.key > parent.key else parent.right_child
+            else:
+                if not node.parent.left_child.key:
+                    cousin = parent.right_child
+                else:
+                    cousin = parent.left_child
+
+            # Case 2: the cousin node is red
+            if cousin.color == RED:
+                self.__rotation(parent, node.key > parent.key)
+                cousin.color = BLACK
+                parent.color = RED
+                self.__delete_check(node)
+
+            else:
+                if node.key:
+                    outer_child = cousin.left_child if node.key > parent.key else cousin.right_child
+                    inner_child = cousin.right_child if node.key > parent.key else cousin.left_child
+                else:
+                    if not node.parent.left_child.key:
+                        outer_child = cousin.right_child
+                        inner_child = cousin.left_child
+                    else:
+                        outer_child = cousin.left_child
+                        inner_child = cousin.right_child
+
+                # Case 3: the cousin node is black, its outer child node is red
+                if outer_child.color == RED:
+                    if node.key:
+                        self.__rotation(parent, node.key > parent.key)
+                    else:
+                        if not node.parent.right_child.key:
+                            self.__rotation(parent, right_rotation=True)
+                        else:
+                            self.__rotation(parent)
+
+                    outer_child.color = BLACK
+                    cousin.color = parent.color
+                    parent.color = BLACK
+
+                # Case 4: the cousin node is black, its inner child node is red
+                elif inner_child.color == RED:
+                    self.__rotation(cousin, node.key <= parent.key)
+                    inner_child.color = BLACK
+                    cousin.color = RED
+                    self.__delete_check(node)
+
+                # Case 5: the cousin node and its children nodes are black, the parent node is red
+                elif parent.color == RED:
+                    parent.color = BLACK
+                    cousin.color = RED
+
+                # Case 6: the cousin node and its children nodes are black, the parent node is also black
+                elif parent.color == BLACK:
+                    cousin.color = RED
+                    self.__delete_check(parent)
+
+                else:
+                    raise IndexError("Unknown delete case detected!")
+
+    def __update_size_tree(self, node, delete=False):
+        if not delete:
+            node.size_tree += 1
+            while node.parent:
+                node = node.parent
+                node.size_tree += 1
+        else:
+            node.size_tree -= 1
+            while node.parent:
+                node = node.parent
+                node.size_tree -= 1
+
+    def __swap_kv(self, node1, node2):
+        """
+        Swap key-value pair of two node.
+
+        Args:
+            node1: class NodeRBT
+            node2: class NodeRBT
+
+        """
+        node1.key, node2.key = node2.key, node1.key
+        node1.value, node2.value = node2.value, node1.value
+
+    def __check_node(self, node):
+        """
+        Check whether a node exists.
+        Args:
+            node: class NodeRBT
+
+        """
+        if not node or not node.key:
+            raise IndexError("Node doesn't exist!")
+
     def check_balance(self):
         size_tree = self.root.size_tree
         num_black_nodes_ref = 0
 
         # calculate the number of black nodes on the path to the node with the smallest key
         pointer = self.root
-        while pointer.left_child.key:
+        while pointer.key:
             if pointer.color == BLACK:
                 num_black_nodes_ref += 1
             pointer = pointer.left_child
@@ -272,10 +391,11 @@ class RedBlackTree(object):
             print_path: True for printing the searching path, and vice versa
 
         Returns:
-            search_node: class NodeBST
+            search_node: class NodeRBT
 
         """
         parent_node, search_node = self.__compare(key, method='search', print_path=print_path)
+        self.__check_node(search_node)
 
         return search_node
 
@@ -287,8 +407,11 @@ class RedBlackTree(object):
             print_path: True for printing the searching path, and vice versa
 
         """
-        search_node = self.get_node(key, print_path)
-        print("ID: {}\nValue: {}\nColor: {}".format(search_node.key, search_node.value, search_node.get_color()))
+        _, search_node = self.__compare(key, method='search', print_path=print_path)
+        if not search_node.key:
+            print("Node doesn't exist!")
+        else:
+            print("ID: {}\nValue: {}\nColor: {}".format(search_node.key, search_node.value, search_node.get_color()))
 
     def select(self, index, source=None):
         """
@@ -314,6 +437,65 @@ class RedBlackTree(object):
 
         return check_node
 
+    def get_predecessor(self, key):
+        """
+        Get the predecessor the of given node.
+        Args:
+            key: the key of the node to be searched
+
+        Returns:
+            pred_node: predecessor of the node, class NodeRBT
+
+        """
+        parent_node, search_node = self.__compare(key, method='search')
+        self.__check_node(search_node)
+
+        # if the node has a left tree
+        if search_node.left_child.key:
+            pred_node, _ = self.__compare(method='max', source=search_node.left_child)
+
+        # if the node has no left tree
+        else:
+            while search_node.key < parent_node.key:
+                search_node = parent_node
+                parent_node = parent_node.parent
+
+                # if it reaches the root, means there is no predecessor
+                if not parent_node:
+                    return NodeRBT(None, None)
+
+            pred_node = parent_node
+
+        return pred_node
+
+    def get_successor(self, key):
+        """
+        Get the successor the of given node.
+        Args:
+            key: the key of the node to be searched
+
+        Returns:
+            succ_node: successor of the node, class NodeRBT
+
+        """
+        parent_node, search_node = self.__compare(key, method='search')
+        self.__check_node(search_node)
+
+        if search_node.right_child.key:
+            succ_node, _ = self.__compare(method='min', source=search_node.right_child)
+        else:
+            while search_node.key > parent_node.key:
+                search_node = parent_node
+                parent_node = parent_node.parent
+
+                # if it reaches the root, means there is no predecessor
+                if not parent_node:
+                    return NodeRBT(None, None)
+
+            succ_node = parent_node
+
+        return succ_node
+
     def insert(self, key, value):
         insert_node = NodeRBT(key, value, color=RED)
 
@@ -326,9 +508,6 @@ class RedBlackTree(object):
             self.root.color = BLACK
             self.root.left_child = NodeRBT(None, None)
             self.root.right_child = NodeRBT(None, None)
-
-            # update the size of tree
-            insert_node.size_tree += 1
 
         else:
             insert_node.parent = parent_node
@@ -346,17 +525,81 @@ class RedBlackTree(object):
             else:
                 self.__fix_double_reds(insert_node)
 
-            # update the size of tree
-            parent_node = insert_node.parent
-            insert_node.size_tree += 1
-            parent_node.size_tree += 1
-            while parent_node.parent:
-                parent_node = parent_node.parent
-                parent_node.size_tree += 1
+        # update the size of tree
+        self.__update_size_tree(insert_node)
 
-    def show_single_path(self, node, path_str=""):
+    def delete(self, key):
+        """
+        Delete a node with the given key.
+        Args:
+            key: the key of the node to be deleted
+
+        """
+        parent_node, search_node = self.__compare(key, method='search')
+        self.__check_node(search_node)
+
+        # Case 1: the node has no children nodes
+        if (not search_node.left_child.key) and (not search_node.right_child.key):
+            # update the size of tree
+            self.__update_size_tree(search_node, delete=True)
+            if parent_node:
+                if search_node.key <= parent_node.key:
+                    parent_node.left_child = search_node.left_child
+                else:
+                    parent_node.right_child = search_node.right_child       # left and right children are both empty
+
+                if search_node.color == BLACK:
+                    self.__delete_check(search_node)
+
+            # if the parent node is None, means it's the root
+            else:
+                self.root = NodeRBT(None, None)
+
+            search_node.reset()
+
+        # Case 2: the node has only one child node
+        elif bool(search_node.left_child.key) != bool(search_node.right_child.key):
+            self.__update_size_tree(search_node, delete=True)
+            child = search_node.left_child if search_node.left_child.key else search_node.right_child.key
+
+            if parent_node:
+                if key <= parent_node.key:
+                    parent_node.left_child = child
+                else:
+                    parent_node.right_child = child
+                child.parent = parent_node
+            else:
+                child.parent = None
+
+            search_node.reset()
+
+            self.__delete_check(child)
+
+        # Case 3: the node has two children nodes
+        else:
+            # swap predecessor and the node
+            pred = self.get_predecessor(key)
+            child = pred.left_child
+            self.__swap_kv(search_node, pred)
+
+            # update the size of tree
+            self.__update_size_tree(pred, delete=True)
+
+            # delete the node
+            # if the predecessor is the root of the left tree
+            if pred.parent == search_node:
+                search_node.left_child = child
+                child.parent = search_node
+            else:
+                pred.parent.right_child = child
+                child.parent = pred.parent
+            pred.reset()
+
+            self.__delete_check(child)
+
+    def str_single_path(self, node, path_str=""):
         while node.parent:
-            path_str = self.show_single_path(node.parent, path_str)
+            path_str = self.str_single_path(node.parent, path_str)
             break
 
         path_str += " -> "
@@ -370,19 +613,19 @@ class RedBlackTree(object):
         for i in range(1, self.root.size_tree + 1):
             node = self.select(i)
             if node.size_tree == 1:
-                print("|" + self.show_single_path(node))
+                print("|" + self.str_single_path(node))
         print("------------------------")
 
 
 treeRBT = RedBlackTree()
 
 # test for insert case 1 & 2 & 3.1
-treeRBT.insert(2000, 100)
-treeRBT.insert(1500, 100)
-treeRBT.insert(2500, 100)
-treeRBT.insert(1300, 100)
-treeRBT.insert(1700, 100)
-treeRBT.insert(1600, 100)
+# treeRBT.insert(2000, 100)
+# treeRBT.insert(1500, 100)
+# treeRBT.insert(2500, 100)
+# treeRBT.insert(1300, 100)
+# treeRBT.insert(1700, 100)
+# treeRBT.insert(1600, 100)
 # treeRBT.search(1600, print_path=True)
 
 # test for insert case 3.2.1
@@ -393,11 +636,10 @@ treeRBT.insert(1600, 100)
 #     i.show_info()
 
 # test for insert case 3.2.2
-treeRBT.insert(1200, 100)
-treeRBT.insert(1250, 100)
+# treeRBT.insert(1200, 100)
+# treeRBT.insert(1250, 100)
 # for i in treeRBT:
 #     i.show_info()
-
 
 # # test for select & iteration & list
 # print(treeRBT.select(3))
@@ -405,6 +647,26 @@ treeRBT.insert(1250, 100)
 #     print(i)
 # print(treeRBT[3])
 
-treeRBT.check_all()
+# test for delete
+random.seed(1)
+key_list = [i for i in range(1, 11)]
+random.shuffle(key_list)
+print(key_list)
+for i in range(10):
+    treeRBT.insert(key_list[i], 0)
 
+delete_list = [i for i in range(1, 11)]
+random.shuffle(delete_list)
+print(delete_list)
+for i in range(10):
+    treeRBT.delete(delete_list[i])
+
+
+
+
+
+
+treeRBT.check_all()
 treeRBT.show_paths()
+# for i in treeRBT:
+#     i.show_info()
