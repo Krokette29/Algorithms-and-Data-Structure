@@ -165,7 +165,7 @@ class RedBlackTree(object):
                 if node.key <= parent.key:
                     parent.left_child = neighbor
                 else:
-                    parent.right_child = node.right_child
+                    parent.right_child = node.left_child
             else:
                 self.root = neighbor
 
@@ -248,7 +248,11 @@ class RedBlackTree(object):
 
             # Case 2: the cousin node is red
             if cousin.color == RED:
-                self.__rotation(parent, node.key > parent.key)
+                if parent.left_child == node:
+                    right_rotation = True
+                else:
+                    right_rotation = False
+                self.__rotation(parent, right_rotation)
                 cousin.color = BLACK
                 parent.color = RED
                 self.__delete_check(node)
@@ -281,7 +285,11 @@ class RedBlackTree(object):
 
                 # Case 4: the cousin node is black, its inner child node is red
                 elif inner_child.color == RED:
-                    self.__rotation(cousin, node.key <= parent.key)
+                    if parent.left_child == node:
+                        right_rotation = True
+                    else:
+                        right_rotation = False
+                    self.__rotation(cousin, right_rotation)
                     inner_child.color = BLACK
                     cousin.color = RED
                     self.__delete_check(node)
@@ -347,7 +355,7 @@ class RedBlackTree(object):
         for i in range(1, size_tree + 1):
             node = self.select(i)
             # check every end node whether the numbers of black nodes are same
-            if node.size_tree == 1:
+            if not node.left_child.key or not node.right_child.key:
                 num_black_nodes = 0
                 pointer = node
                 while pointer.parent:
@@ -511,8 +519,8 @@ class RedBlackTree(object):
 
         else:
             insert_node.parent = parent_node
-            insert_node.left_child = NodeRBT(None, None, color=BLACK)
-            insert_node.right_child = NodeRBT(None, None, color=BLACK)
+            insert_node.left_child = NodeRBT(None, None)
+            insert_node.right_child = NodeRBT(None, None)
             if key <= parent_node.key:
                 parent_node.left_child = insert_node
             else:
@@ -560,7 +568,7 @@ class RedBlackTree(object):
         # Case 2: the node has only one child node
         elif bool(search_node.left_child.key) != bool(search_node.right_child.key):
             self.__update_size_tree(search_node, delete=True)
-            child = search_node.left_child if search_node.left_child.key else search_node.right_child.key
+            child = search_node.left_child if search_node.left_child.key else search_node.right_child
 
             if parent_node:
                 if key <= parent_node.key:
@@ -568,12 +576,18 @@ class RedBlackTree(object):
                 else:
                     parent_node.right_child = child
                 child.parent = parent_node
+
+            # if no parent node, means it's the root
             else:
                 child.parent = None
+                self.root = child
 
+            if search_node.color == BLACK:
+                if child.color == RED:
+                    child.color = BLACK
+                else:
+                    self.__delete_check(child)
             search_node.reset()
-
-            self.__delete_check(child)
 
         # Case 3: the node has two children nodes
         else:
@@ -593,9 +607,11 @@ class RedBlackTree(object):
             else:
                 pred.parent.right_child = child
                 child.parent = pred.parent
-            pred.reset()
 
-            self.__delete_check(child)
+            if pred.color == BLACK:
+                self.__delete_check(child)
+
+            pred.reset()
 
     def str_single_path(self, node, path_str=""):
         while node.parent:
@@ -648,12 +664,14 @@ treeRBT = RedBlackTree()
 # print(treeRBT[3])
 
 # test for delete
-random.seed(1)
+random.seed(5)
 key_list = [i for i in range(1, 11)]
 random.shuffle(key_list)
 print(key_list)
 for i in range(10):
     treeRBT.insert(key_list[i], 0)
+
+
 
 delete_list = [i for i in range(1, 11)]
 random.shuffle(delete_list)
