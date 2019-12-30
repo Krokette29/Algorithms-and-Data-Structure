@@ -256,7 +256,7 @@ class BinarySearchTree(object):
         self.__check_node(search_node)
 
         if search_node.right_child and search_node.right_child.key:
-            pred_node, _ = self.__compare(method='min', source=search_node.right_child)
+            succ_node, _ = self.__compare(method='min', source=search_node.right_child)
         else:
             while search_node.key > parent_node.key:
                 search_node = parent_node
@@ -266,9 +266,9 @@ class BinarySearchTree(object):
                 if not parent_node:
                     return NodeBST(None, None)
 
-            pred_node = parent_node
+            succ_node = parent_node
 
-        return pred_node
+        return succ_node
 
     def print_in_order(self, source=None, descending=False):
         """
@@ -341,34 +341,34 @@ class BinarySearchTree(object):
 
 
 
-tree = BinarySearchTree()
-random.seed(1)
-
-key_list = [random.randint(1000, 2000) for i in range(10)]
-value_list = [random.randint(60, 100) for i in range(10)]
-
-for i in range(10):
-    tree.insert(key_list[i], value_list[i])
-
-print('------------------------------------------')
-sorted_list = sorted(key_list)
-print('max: %s' % max(key_list))
-print('min: %s' % min(key_list))
-print('sorted array: {}'.format(sorted_list))
-print('------------------------------------------')
-
-print("min key: %s" % tree.min.key)
-print("max key: %s" % tree.max.key)
-print("successor of 1261 is: %s" % tree.get_successor(1261).key)
-
-print('----->')
-tree.print_in_order()
-print('----->')
-
-print('delete value 1867')
-tree.delete(1867)
-tree.search(1779, print_path=True)
-
-print('rotate around 1582')
-tree.rotation(1582)
-tree.search(1507, print_path=True)
+# tree = BinarySearchTree()
+# random.seed(1)
+#
+# key_list = [random.randint(1000, 2000) for i in range(10)]
+# value_list = [random.randint(60, 100) for i in range(10)]
+#
+# for i in range(10):
+#     tree.insert(key_list[i], value_list[i])
+#
+# print('------------------------------------------')
+# sorted_list = sorted(key_list)
+# print('max: %s' % max(key_list))
+# print('min: %s' % min(key_list))
+# print('sorted array: {}'.format(sorted_list))
+# print('------------------------------------------')
+#
+# print("min key: %s" % tree.min.key)
+# print("max key: %s" % tree.max.key)
+# print("successor of 1261 is: %s" % tree.get_successor(1261).key)
+#
+# print('----->')
+# tree.print_in_order()
+# print('----->')
+#
+# print('delete value 1867')
+# tree.delete(1867)
+# tree.search(1779, print_path=True)
+#
+# print('rotate around 1582')
+# tree.rotation(1582)
+# tree.search(1507, print_path=True)
