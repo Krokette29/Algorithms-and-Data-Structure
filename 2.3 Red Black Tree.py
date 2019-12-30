@@ -19,12 +19,20 @@ class NodeRBT(object):
     __repr__ = __str__
 
     def get_color(self):
+        """
+        Return the color name of the node.
+
+        """
         if self.color:
             return "RED"
         else:
             return "BLACK"
 
     def show_info(self):
+        """
+        Print all information of the node.
+
+        """
         if not self.parent and self.key:
             print("######### ROOT #########")
         print("------------------------")
@@ -42,9 +50,17 @@ class NodeRBT(object):
         print("------------------------")
 
     def get_info_in_tuple(self):
+        """
+        Return a tuple of basic information (key, value, color, size_tree).
+
+        """
         return self.key, self.value, self.get_color(), self.size_tree
 
     def reset(self):
+        """
+        Reset all parameters of the node.
+
+        """
         self.key = None
         self.value = None
         self.parent = None
@@ -63,10 +79,18 @@ class RedBlackTree(object):
     __repr__ = __str__
 
     def __iter__(self):
+        """
+        Initialization of for loop.
+
+        """
         self.pointer = 0
         return self
 
     def __next__(self):
+        """
+        Next item of for loop.
+
+        """
         self.pointer += 1
         if self.pointer > self.root.size_tree:
             raise StopIteration
@@ -74,27 +98,62 @@ class RedBlackTree(object):
         return self.select(self.pointer)
 
     def __getitem__(self, item):
+        """
+        Make class as a list, return the node with ith smallest key.
+        Args:
+            item: index of the list
+
+        """
         return self.select(item)
 
+    @property
+    def size(self):
+        """
+        Return the size of the tree.
+
+        """
+        return self.root.size_tree
+
     def __compare(self, key=None, method='compare', source=None, print_path=False):
+        """
+        Main compare function to go through a path.
+        Args:
+            key: input key to search
+            method:
+                - 'compare' for basic insertion
+                - 'search' for search for a certain key
+                - 'min' for search for min key
+                - 'max' for search for max key
+            source: source node, only for recursion
+            print_path: True for printing the searching path, and vice versa
+
+        Returns:
+            parent_node: parent node of the compare node
+            compare_node: the final node when the search ends, None for 'compare', target node for the other nodes
+
+        """
         compare_node = source if source else self.root
         parent_node = None
 
         while compare_node.key:
             parent_node = compare_node
 
+            # method search
             if method == 'search':
                 if parent_node.key == key:
                     # when the method is search, compare_node is the result
                     parent_node = parent_node.parent
                     break
 
+            # for method compare and search
             if method == 'compare' or method == 'search':
                 compare_node = parent_node.left_child if key <= parent_node.key else parent_node.right_child
 
+            # method min
             if method == 'min':
                 compare_node = parent_node.left_child
 
+            # method max
             if method == 'max':
                 compare_node = parent_node.right_child
 
@@ -143,20 +202,12 @@ class RedBlackTree(object):
             neighbor.parent = parent
             neighbor.left_child = node
 
-            # print("--> before left rotation:")
-            # print("size tree of node {}: {}".format(node.key, node.size_tree))
-            # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
-
             # correct size of tree
             node.size_tree -= neighbor.size_tree
             if node.right_child:
                 node.size_tree += node.right_child.size_tree
                 neighbor.size_tree -= node.right_child.size_tree
             neighbor.size_tree += node.size_tree
-
-            # print("--> after left rotation:")
-            # print("size tree of node {}: {}".format(node.key, node.size_tree))
-            # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
 
         # right rotation
         else:
@@ -183,10 +234,6 @@ class RedBlackTree(object):
             neighbor.parent = parent
             neighbor.right_child = node
 
-            # print("--> before right rotation:")
-            # print("size tree of node {}: {}".format(node.key, node.size_tree))
-            # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
-
             # correct size of tree
             node.size_tree -= neighbor.size_tree
             if node.left_child:
@@ -194,11 +241,13 @@ class RedBlackTree(object):
                 neighbor.size_tree -= node.left_child.size_tree
             neighbor.size_tree += node.size_tree
 
-            # print("--> after right rotation:")
-            # print("size tree of node {}: {}".format(node.key, node.size_tree))
-            # print("size tree of node {}: {}".format(neighbor.key, neighbor.size_tree))
-
     def __fix_double_reds(self, node):
+        """
+        Method to fix the problem of double reds.
+        Args:
+            node: the underlying red node, i.e. its parent is also red
+
+        """
         grand_parent_node = node.parent.parent
         parent_node = node.parent
 
@@ -236,6 +285,12 @@ class RedBlackTree(object):
             grand_parent_node.color = RED
 
     def __delete_check(self, node):
+        """
+        Method to check the problem during deletion.
+        Args:
+            node: problem node during deletion
+
+        """
         # Case 1: the node is the root
         if not node.parent:
             node.color = BLACK
@@ -312,6 +367,13 @@ class RedBlackTree(object):
                     raise IndexError("Unknown delete case detected!")
 
     def __update_size_tree(self, node, delete=False):
+        """
+        Update the parameter size_tree of all nodes along the path.
+        Args:
+            node: the end node of the path to be updated
+            delete: True for decreasing, False for increasing
+
+        """
         if not delete:
             node.size_tree += 1
             while node.parent:
@@ -345,7 +407,11 @@ class RedBlackTree(object):
         if not node or not node.key:
             raise IndexError("Node doesn't exist!")
 
-    def check_balance(self):
+    def check_balance(self, output_information=True):
+        """
+        Check whether the tree is balance, i.e. all paths have the same number of black nodes along the path.
+
+        """
         size_tree = self.root.size_tree
         num_black_nodes_ref = 0
 
@@ -372,9 +438,14 @@ class RedBlackTree(object):
                 if num_black_nodes != num_black_nodes_ref:
                     raise ValueError("The tree is not balance!")
 
-        # print("Balance test success!")
+        if output_information:
+            print("Balance test success!")
 
-    def check_color(self):
+    def check_color(self, output_information=True):
+        """
+        Check whether the color of the tree is correct, including root check and check of double reds.
+
+        """
         size_tree = self.root.size_tree
         for i in range(1, size_tree + 1):
             node = self.select(i)
@@ -389,11 +460,18 @@ class RedBlackTree(object):
                 if pointer.color != BLACK:
                     raise ValueError("The root is not black!")
 
-        # print("Color test success!")
+        if output_information:
+            print("Color test success!")
 
-    def check_all(self):
-        self.check_balance()
-        self.check_color()
+    def check_all(self, output_information=True):
+        """
+        Check balance and the color of the tree.
+        Args:
+            output_information: True for printing the success message, and vice versa
+
+        """
+        self.check_balance(output_information)
+        self.check_color(output_information)
 
     def get_node(self, key, print_path=False):
         """
@@ -430,6 +508,9 @@ class RedBlackTree(object):
         Select a certain index of node in an ascending order, i.e. return the node with the ith smallest key.
         Args:
             index: ith smallest key
+
+        Returns:
+            check_node: the result of selection, class NodeRBT
 
         """
         if index > self.root.size_tree or index <= 0:
@@ -509,6 +590,13 @@ class RedBlackTree(object):
         return succ_node
 
     def insert(self, key, value):
+        """
+        Insert a node with key and value.
+        Args:
+            key: key of the node to be inserted
+            value: value of the node to be inserted
+
+        """
         insert_node = NodeRBT(key, value, color=RED)
 
         parent_node, _ = self.__compare(key)
@@ -617,78 +705,72 @@ class RedBlackTree(object):
 
             pred.reset()
 
-    def str_single_path(self, node, path_str=""):
+    def str_single_path(self, node, _path_str=""):
+        """
+        Return the information string of a certain path with the given end node.
+        Args:
+            node: the end node of the path
+            _path_str: path information of last time, only for recursion
+
+        Returns:
+            _path_str: final path information
+
+        """
         while node.parent:
-            path_str = self.str_single_path(node.parent, path_str)
+            _path_str = self.str_single_path(node.parent, _path_str)
             break
 
-        path_str += " -> "
-        path_str += str(node.get_info_in_tuple())
+        _path_str += " -> "
+        _path_str += str(node.get_info_in_tuple())
 
-        return path_str
+        return _path_str
 
     def show_paths(self):
+        """
+        Show all paths of the tree, from root to NULL leafs.
+
+        """
         print("------------------------")
         print("######### ALL PATHS #########")
-        for i in range(1, self.root.size_tree + 1):
-            node = self.select(i)
-            if node.size_tree == 1:
-                print("|" + self.str_single_path(node))
+
+        if self.size == 0:
+            print("Empty tree!")
+        else:
+            for i in range(1, self.root.size_tree + 1):
+                node = self.select(i)
+                if node.size_tree == 1:
+                    print("|" + self.str_single_path(node))
+
         print("------------------------")
 
 
+# test for randomly insertion and deletion
 treeRBT = RedBlackTree()
+num_nodes = 20
 
-# test for insert case 1 & 2 & 3.1
-# treeRBT.insert(2000, 100)
-# treeRBT.insert(1500, 100)
-# treeRBT.insert(2500, 100)
-# treeRBT.insert(1300, 100)
-# treeRBT.insert(1700, 100)
-# treeRBT.insert(1600, 100)
-# treeRBT.search(1600, print_path=True)
-
-# test for insert case 3.2.1
-# treeRBT.insert(1200, 100)
-# treeRBT.insert(1100, 100)
-# treeRBT.search(1300, print_path=True)
-# for i in treeRBT:
-#     i.show_info()
-
-# test for insert case 3.2.2
-# treeRBT.insert(1200, 100)
-# treeRBT.insert(1250, 100)
-# for i in treeRBT:
-#     i.show_info()
-
-# # test for select & iteration & list
-# print(treeRBT.select(3))
-# for i in treeRBT:
-#     print(i)
-# print(treeRBT[3])
-
-# test for delete
-for t in range(1, 10001):
-    random.seed(t)
-    key_list = [i for i in range(1, 11)]
-    random.shuffle(key_list)
-    # print(key_list)
-    for j in range(10):
-        treeRBT.insert(key_list[j], 0)
-
-    delete_list = [i for i in range(1, 11)]
-    random.shuffle(delete_list)
-    # print(delete_list)
-    for k in range(10):
-        treeRBT.delete(delete_list[k])
-        # print("delete {} value: {}".format(k+1, delete_list[k]))
-
-    print("test {} success!".format(t))
-
-
-
+# insertion
+key_list = [random.randint(1000, 2000) for i in range(num_nodes)]
+value_list = [random.randint(0, 100) for i in range(1, num_nodes + 1)]
+random.shuffle(key_list)
+print("key list: {}".format(key_list))
+print("value list: {}".format(value_list))
+for i in range(num_nodes):
+    treeRBT.insert(key_list[i], value_list[i])
 
 treeRBT.check_all()
 treeRBT.show_paths()
+
+# show all information of all nodes
 # for i in treeRBT:
 #     i.show_info()
+
+# deletion
+delete_list = [i for i in range(num_nodes)]
+random.shuffle(delete_list)
+for i in range(num_nodes):
+    delete_index = delete_list[i]
+    treeRBT.delete(key_list[delete_index])
+    print("delete {} : {}".format(key_list[delete_index], value_list[delete_index]))
+    treeRBT.check_all(output_information=False)
+
+treeRBT.show_paths()
