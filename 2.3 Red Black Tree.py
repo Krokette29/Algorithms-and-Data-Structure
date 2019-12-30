@@ -136,7 +136,8 @@ class RedBlackTree(object):
             node.right_child = neighbor.left_child
 
             # update child tree of neighbor
-            neighbor.left_child.parent = node
+            if neighbor.key:
+                neighbor.left_child.parent = node
 
             # update neighbor
             neighbor.parent = parent
@@ -148,8 +149,9 @@ class RedBlackTree(object):
 
             # correct size of tree
             node.size_tree -= neighbor.size_tree
-            node.size_tree += node.right_child.size_tree
-            neighbor.size_tree -= node.right_child.size_tree
+            if node.right_child:
+                node.size_tree += node.right_child.size_tree
+                neighbor.size_tree -= node.right_child.size_tree
             neighbor.size_tree += node.size_tree
 
             # print("--> after left rotation:")
@@ -174,7 +176,8 @@ class RedBlackTree(object):
             node.left_child = neighbor.right_child
 
             # update child tree of neighbor
-            neighbor.right_child.parent = node
+            if neighbor.key:
+                neighbor.right_child.parent = node
 
             # update neighbor
             neighbor.parent = parent
@@ -186,8 +189,9 @@ class RedBlackTree(object):
 
             # correct size of tree
             node.size_tree -= neighbor.size_tree
-            node.size_tree += node.left_child.size_tree
-            neighbor.size_tree -= node.left_child.size_tree
+            if node.left_child:
+                node.size_tree += node.left_child.size_tree
+                neighbor.size_tree -= node.left_child.size_tree
             neighbor.size_tree += node.size_tree
 
             # print("--> after right rotation:")
@@ -248,7 +252,7 @@ class RedBlackTree(object):
 
             # Case 2: the cousin node is red
             if cousin.color == RED:
-                if parent.left_child == node:
+                if parent.left_child == cousin:
                     right_rotation = True
                 else:
                     right_rotation = False
@@ -270,7 +274,7 @@ class RedBlackTree(object):
                         inner_child = cousin.right_child
 
                 # Case 3: the cousin node is black, its outer child node is red
-                if outer_child.color == RED:
+                if outer_child and outer_child.color == RED:
                     if node.key:
                         self.__rotation(parent, node.key > parent.key)
                     else:
@@ -284,8 +288,8 @@ class RedBlackTree(object):
                     parent.color = BLACK
 
                 # Case 4: the cousin node is black, its inner child node is red
-                elif inner_child.color == RED:
-                    if parent.left_child == node:
+                elif inner_child and inner_child.color == RED:
+                    if parent.right_child == cousin:
                         right_rotation = True
                     else:
                         right_rotation = False
@@ -368,7 +372,7 @@ class RedBlackTree(object):
                 if num_black_nodes != num_black_nodes_ref:
                     raise ValueError("The tree is not balance!")
 
-        print("Balance test success!")
+        # print("Balance test success!")
 
     def check_color(self):
         size_tree = self.root.size_tree
@@ -385,7 +389,7 @@ class RedBlackTree(object):
                 if pointer.color != BLACK:
                     raise ValueError("The root is not black!")
 
-        print("Color test success!")
+        # print("Color test success!")
 
     def check_all(self):
         self.check_balance()
@@ -664,22 +668,22 @@ treeRBT = RedBlackTree()
 # print(treeRBT[3])
 
 # test for delete
-random.seed(5)
-key_list = [i for i in range(1, 11)]
-random.shuffle(key_list)
-print(key_list)
-for i in range(10):
-    treeRBT.insert(key_list[i], 0)
+for t in range(1, 10001):
+    random.seed(t)
+    key_list = [i for i in range(1, 11)]
+    random.shuffle(key_list)
+    # print(key_list)
+    for j in range(10):
+        treeRBT.insert(key_list[j], 0)
 
+    delete_list = [i for i in range(1, 11)]
+    random.shuffle(delete_list)
+    # print(delete_list)
+    for k in range(10):
+        treeRBT.delete(delete_list[k])
+        # print("delete {} value: {}".format(k+1, delete_list[k]))
 
-
-delete_list = [i for i in range(1, 11)]
-random.shuffle(delete_list)
-print(delete_list)
-for i in range(10):
-    treeRBT.delete(delete_list[i])
-
-
+    print("test {} success!".format(t))
 
 
 
