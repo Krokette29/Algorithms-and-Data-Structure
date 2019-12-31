@@ -1,3 +1,6 @@
+import binascii
+
+
 class HashNode(object):
     def __init__(self, key, value):
         self.key = key
@@ -6,8 +9,9 @@ class HashNode(object):
 
 
 class HashTableUsingChaining(object):
-    def __init__(self, length):
+    def __init__(self, length, key_type="int"):
         self.hash_table = [HashNode(None, None) for i in range(length)]
+        self.key_type = key_type
 
         # n for hash function mod
         self.hash_function_n = self.__max_prime_num(length)
@@ -33,7 +37,7 @@ class HashTableUsingChaining(object):
 
         raise IndexError("No prime number found! Try another length!")
 
-    def __hash_function(self, key: int, n):
+    def __hash_function(self, key, n):
         """
         Hash function using mod.
         Args:
@@ -46,7 +50,31 @@ class HashTableUsingChaining(object):
         """
         return key % self.hash_function_n
 
-    def insert(self, key: int, value):
+    def __key_type_check(self, key):
+        """
+        Check the type of keys.
+
+        """
+        if self.key_type == "string":
+            if not isinstance(key, str):
+                raise ValueError("Key type error!")
+
+        elif self.key_type == "int":
+            if not isinstance(key, int):
+                raise ValueError("Key type error!")
+
+        else:
+            raise ValueError("Unknown key type!")
+
+    def __str_to_int(self, key: str):
+        """
+        Transform from string to integer, in order to use the hash function.
+
+        """
+        string = binascii.b2a_hex(key.encode('utf-8'))
+        return int(string, 16)
+
+    def insert(self, key, value):
         """
         Insert a key-value pair.
         Args:
@@ -54,7 +82,10 @@ class HashTableUsingChaining(object):
             value: any value
 
         """
-        index = self.__hash_function(key, self.hash_function_n)
+        self.__key_type_check(key)
+        key_int = self.__str_to_int(key) if self.key_type == "string" else key
+
+        index = self.__hash_function(key_int, self.hash_function_n)
 
         if not self.hash_table[index].key:
             self.hash_table[index].key = key
@@ -66,13 +97,15 @@ class HashTableUsingChaining(object):
             insert_node.next = self.hash_table[index]
             self.hash_table[index] = insert_node
 
-    def search(self, key: int):
+    def search(self, key):
         """
         Search for a certain key.
 
         """
-        index = self.__hash_function(key, self.hash_function_n)
+        self.__key_type_check(key)
+        key_int = self.__str_to_int(key) if self.key_type == "string" else key
 
+        index = self.__hash_function(key_int, self.hash_function_n)
         node = self.hash_table[index]
 
         if not node.key:
@@ -90,6 +123,10 @@ class HashTableUsingChaining(object):
 
 
 def main():
+    #############################
+    # hash table for integer
+    print("-> hash table for integer")
+
     hash_table = HashTableUsingChaining(15)
     print("hash function using {}".format(hash_table.hash_function_n))
 
@@ -100,6 +137,19 @@ def main():
     # search test
     hash_table.search(1)
     hash_table.search(14)
+    print('------------------------')
+
+    #############################
+    # hash table for string
+    print("-> hash table for string")
+
+    hash_table_str = HashTableUsingChaining(15, key_type="string")
+    hash_table_str.insert('abc', 123)
+    hash_table_str.insert('cdf', 'sfb')
+    hash_table_str.search('kfc')
+    hash_table_str.search('abc')
+    hash_table_str.search('cdf')
+    print('------------------------')
 
 
 if __name__ == "__main__":
