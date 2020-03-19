@@ -1,2 +1,4 @@
 test.py
 /data/test.txt
+.idea/
+__pycache__/
