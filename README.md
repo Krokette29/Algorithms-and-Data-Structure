@@ -29,3 +29,21 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ### 2.2 Dijkstra's Shortest Path Algorithm
 - Dijkstra's Algorithm (using brute-force)
 - Dijkstra's Algorithm (using heap)
+
+### 2.3 Heap and Tree
+- MinHeap (e.g. Median Maintenance)
+- Red Black Tree
+
+### 2.4 Hash Table and Bloom Filter
+- Hash Table
+- Bloom Filter
+
+## Part3. Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
+
+### 3.1 Greedy Algorithm and Prim's MST
+- Job Scheduling using Greedy Algorithm
+- Prim's MST using brute-force/heap
+
+### 3.2 Kruskal's MST and Clustering
+- Clustering using Kruskal Algorithm
+- Clustering of big graph (together with Hamming Distance and Bit Operation)
