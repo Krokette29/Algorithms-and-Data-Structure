@@ -47,3 +47,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ### 3.2 Kruskal's MST and Clustering
 - Clustering using Kruskal Algorithm
 - Clustering of big graph (together with Hamming Distance and Bit Operation)
+
+### 3.3 Huffman Coding and Weighted Independent Set
+- Huffman Coding (using heap)
+- maximum WIS using DP
