@@ -51,3 +51,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ### 3.3 Huffman Coding and Weighted Independent Set
 - Huffman Coding (using heap)
 - maximum WIS using DP
+
+### 3.4 Dynamic Programming
+- Knapsack Problem using DP (smaller problem)
+- Knapsack Problem using recursiong with memorization (bigger problem)
