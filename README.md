@@ -45,7 +45,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 - Prim's MST using brute-force/heap
 
 ### 3.2 Kruskal's MST and Clustering
-- Clustering using Kruskal Algorithm
+- Clustering using Kruskal Algorithm with Union Find Set
 - Clustering of big graph (together with Hamming Distance and Bit Operation)
 
 ### 3.3 Huffman Coding and Weighted Independent Set
@@ -55,3 +55,5 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ### 3.4 Dynamic Programming
 - Knapsack Problem using DP (smaller problem)
 - Knapsack Problem using recursiong with memorization (bigger problem)
+- Sequence Alignment/Edit Distance
+- Optimal Binary Search Tree
