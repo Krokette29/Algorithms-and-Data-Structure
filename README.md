@@ -1,5 +1,5 @@
 # Algorithms-and-Data-Structure  
-Here is the list of all algorithms, seperated into a few categories, according to the course of Stanford on coursera - Algorithms Specialization.
+Here is the list of all algorithms and data structures, seperated into a few categories, according to the course of Stanford on coursera - Algorithms Specialization.
 
 ----------------
 ## Part1. Divide and Conquer, Sorting and Searching, and Randomized Algorithms
