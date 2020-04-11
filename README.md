@@ -1,6 +1,7 @@
 # Algorithms-and-Data-Structure  
 Here is the list of all algorithms, seperated into a few categories, according to the course of Stanford on coursera - Algorithms Specialization.
 
+----------------
 ## Part1. Divide and Conquer, Sorting and Searching, and Randomized Algorithms
 
 ### 1.1 Asymptotic Analysis  
@@ -20,6 +21,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 ### 1.4 Linear-time Selection, Graphs, the Contraction Algorithm  
 - Karger Min Cut Algorithm  
 
+----------------
 ## Part2. Graph Search, Shortest Paths, and Data Structures
 
 ### 2.1 BFS and DFS
@@ -38,6 +40,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 - Hash Table
 - Bloom Filter
 
+----------------
 ## Part3. Greedy Algorithms, Minimum Spanning Trees, and Dynamic Programming
 
 ### 3.1 Greedy Algorithm and Prim's MST
@@ -58,6 +61,7 @@ Here is the list of all algorithms, seperated into a few categories, according t
 - Sequence Alignment/Edit Distance
 - Optimal Binary Search Tree
 
+----------------
 ## Part4. Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
 
 ### 4.1 The Bellman-Ford Algorithm and All-Pairs Shortest Paths
