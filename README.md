@@ -57,3 +57,17 @@ Here is the list of all algorithms, seperated into a few categories, according t
 - Knapsack Problem using recursiong with memorization (bigger problem)
 - Sequence Alignment/Edit Distance
 - Optimal Binary Search Tree
+
+## Part4. Shortest Paths Revisited, NP-Complete Problems and What To Do About Them
+
+### 4.1 The Bellman-Ford Algorithm and All-Pairs Shortest Paths
+- APSP Problem with Floyd Warshall Algorithm
+
+### 4.2 NP-Complete Problems and Faster Exact Algorithsm for NPC Problems
+- TSP Problem with DP (using Bitmask for acceleration)
+
+### 4.3 Approximation Algorithms for NPC Problems
+- TSP Problem with Nearest Neighbor heuristic
+
+### 4.4 Local Search Algorithms
+- 2-SAT Problem with Papadimitriou's Algorithm with optimization
